@@ -48,115 +48,91 @@ int list::insert_before(node * & head, int to_add)
     if (!head)
         return 0;
     
-    result += insert_before(head->next, to_add);
-
     if (head->data == 2)
     {
         node *add_me = new node;
         add_me->data = to_add;
         
-        if (head->previous)
+        if (!(head == this->head))
         {
             node *prev = head->previous;
-            prev->next = add_me;
             add_me->previous = prev;
             add_me ->next = head;
             head->previous =add_me;
-            if (head == this->head)
-            {
-                this->head = head->previous;
-            }
-
-            return 1;
+            prev->next = add_me;
+            result += insert_before(head->next->next, to_add);
         }
-    }
-}
-        
-/*
-int list::insert_before(node * & head, int to_add)
-{
-    int result = 0;
-
-    if(!head)
-        return 0;
-    if(head->data == 2)
-    {
-        // create the node
-        node * temp = new node; 
-        temp->data = to_add;
-        node * hold = head->previous;
-
-        temp->next = head;
-        temp->previous = hold;
-        head->previous = temp;
-
-        if(hold)
-            hold->next = temp;
-        
-        // if head is our head of list, we need to make temp head
-        if(head == this->head)
+        else
         {
-            this->head = temp;
+            add_me->next = head;
+            head->previous = add_me;
+            this->head = add_me;
+            result += insert_before(head->next->next, to_add);
         }
-
-    }
-
-    result += insert_before(head->next, to_add);
-
-    return result;
-
-}
-
-
-
-
-int list::insert_before(node * & head, int to_add)
-{
-    int result = 0;
-
-    if(!head)
-        return 0;
-    if(head->data == 2)
-    {
-        node * temp = new node; 
-        temp->data = to_add;
-
-        temp->next = head;
-        temp->previous = head->previous;
-        head->previous = temp;
-        head = temp;
-
-        if(head->next == this->head)
-        {
-            this->head = head;
-        }
-
         ++result;
-        result += insert_before(head->next->next, to_add);
     }
     else
         result += insert_before(head->next, to_add);
-    return result;
 
 }
-*/
+        
 int list::display_last_two()
 {
+    if(!head || !head->next)
+        return 0;
 
+    return display_last_two(head);
 }
 
 int list::display_last_two(node * head)
 {
+    int result = 0;
+
+    if(!head) return 0;
+
+    if(!head->next || !head->next->next)
+    {
+        result += head->data;
+    }
+
+    result += display_last_two(head->next);
+    return result;
 
 }
 
 int list::remove_last_two()
 {
+    if(!head) return 0;
 
+    return remove_last_two(head);
 }
 
 int list::remove_last_two(node * & head)
 {
+    if(!head) return 0;
+
+    if(!head->next || !head->next->next)
+    {
+        if(!head->next)
+        {
+            node * temp = head->previous;
+            delete head;
+            head = temp;
+            head->next = NULL;
+            this->tail = head;
+            return 0;
+        }
+        else
+        {
+            node * hold = head->next;
+            hold->previous = head->previous;
+            delete head;
+            head = hold;
+            return remove_last_two(head);
+        }
+    }
+    else
+        remove_last_two(head->next) + 1;
 
 }
 
